@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+
+body {
+    font-family: "Lato", sans-serif;
+    transition: background-color .5s;
+}
+
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.sidenav a {
+    padding: 0px 0px 0px 36px;
+    text-decoration: none;
+    font-size: 12px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav div {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 16px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+#main {
+    transition: margin-left .5s;
+    padding: 16px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 12px;}
+  .sidenav a {font-size: 12px;}
+}
+
+a.icon-block {
+    display:inline-block;
+    width:10em;
+    float:left;
+    text-align:center;
+}
+
+a.icon-block i,
+a.icon-block span {
+    display:block;
+    width:100%;
+    clear:both;
+}
+
+.links line {
+  stroke: #999;
+  stroke-opacity: 0.1;
+}
+
+.nodes circle {
+  stroke: #999;
+  stroke-width: 1.5px;
+}
+
+.node_label {
+  pointer-events: none;
+  fill-opacity: 0.2;
+}
+
+
+.link_label {
+  pointer-events: none;
+  fill-opacity: 0.2;
+}
+
+
+.node_count {
+  stroke: #777;
+  stroke-width: 1.0px;
+  fill: #999;
+}
+
+text.legend {
+  font-family: Verdana;
+  font-size: 12px;
+  fill: #000;
+}
+
+
+</style>
+
+<body>
+
+<div id="mySidenav" class="sidenav">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+  <div>Lab5:</div>
+  <a href="/networkx/?json_file=../lab5_moss/results/2017/index.json">2017</a>
+  <a href="/networkx/?json_file=../lab5_moss/results/2017vs2016/index.json">2017vs2016</a>
+  <a href="/networkx/?json_file=../lab5_moss/results/2017vs2015/index.json">2017vs2015</a>
+  <a href="/networkx/?json_file=../lab5_moss/results/2017vs2014/index.json">2017vs2014</a>
+  <a href="/networkx/?json_file=../lab5_moss/results/2017vs2013/index.json">2017vs2013</a>
+  <a href="/networkx/?json_file=../lab5_moss/results/2017vs2012/index.json">2017vs2012</a>
+  <a href="/networkx/?json_file=../lab5_moss/results/2017vs2011/index.json">2017vs2011</a>
+
+  <div>Lab4:</div>
+  <a href="/networkx/?json_file=../lab4_moss/results/2017/index.json">2017</a>
+  <a href="/networkx/?json_file=../lab4_moss/results/2017vs2016/index.json">2017vs2016</a>
+  <a href="/networkx/?json_file=../lab4_moss/results/2017vs2015/index.json">2017vs2015</a>
+  <a href="/networkx/?json_file=../lab4_moss/results/2017vs2014/index.json">2017vs2014</a>
+  <a href="/networkx/?json_file=../lab4_moss/results/2017vs2013/index.json">2017vs2013</a>
+  <a href="/networkx/?json_file=../lab4_moss/results/2017vs2012/index.json">2017vs2012</a>
+  <a href="/networkx/?json_file=../lab4_moss/results/2017vs2011/index.json">2017vs2011</a>
+
+  <div>Lab3:</div>
+  <a href="/networkx/?json_file=../lab3_moss/results/2017/index.json">2017</a>
+  <a href="/networkx/?json_file=../lab3_moss/results/2017vs2016/index.json">2017vs2016</a>
+  <a href="/networkx/?json_file=../lab3_moss/results/2017vs2015/index.json">2017vs2015</a>
+  <a href="/networkx/?json_file=../lab3_moss/results/2017vs2014/index.json">2017vs2014</a>
+  <a href="/networkx/?json_file=../lab3_moss/results/2017vs2013/index.json">2017vs2013</a>
+  <a href="/networkx/?json_file=../lab3_moss/results/2017vs2012/index.json">2017vs2012</a>
+  <a href="/networkx/?json_file=../lab3_moss/results/2017vs2011/index.json">2017vs2011</a>
+</div>
+
+<a  class="fa fa-bars" onclick="openNav()"> Menu</a>
+
+<!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
+<div id="main">
+ 
+<svg width="1600" height="900"></svg>
+
+</div>
+
+</body>
+
+
+
+<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+<script type="text/javascript" src="jLouvain.js"></script>
+<script>
+
+
+/* Set the width of the side navigation to 250px and the left margin of the page content to 250px and add a black background color to body */
+function openNav() {
+    document.getElementById("mySidenav").style.width = "250px";
+    document.getElementById("main").style.marginLeft = "250px";
+    document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+}
+
+/* Set the width of the side navigation to 0 and the left margin of the page content to 0, and the background color of body to white */
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("main").style.marginLeft = "0";
+    document.body.style.backgroundColor = "white";
+}
+
+  var urlParam = function(name, w){
+    w = w || window;
+    var rx = new RegExp('[\&|\?]'+name+'=([^\&\#]+)'),
+        val = w.location.search.match(rx);
+    return !val ? '':val[1];
+}
+
+var json_file = urlParam('json_file');
+console.log(json_file);
+
+var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height");
+
+var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+var simulation = d3.forceSimulation()
+    .force("link", d3.forceLink().id(function(d) { return d.id; }))
+    .force("charge", d3.forceManyBody())
+    .force("center", d3.forceCenter(width / 2, height / 2));
+
+d3.json("/networkx/" + json_file, function(error, graph) {
+  if (error) throw error;
+
+    var data_nodes = [];
+    for(var i in graph.nodes) {
+        data_nodes.push(graph.nodes[i].id);
+    }
+
+    var data_links = [];
+    for(var i in graph.links) {
+        data_links.push({source: graph.links[i].source, target: graph.links[i].target, weight: graph.links[i].value});
+    }
+
+  var community = jLouvain().nodes(data_nodes).edges(data_links);
+  var communities  = community();
+      //console.log(data_nodes);
+      //console.log(data_links);
+      //console.log(communities);
+
+  var link = svg.append("g")
+      .attr("class", "links")
+    .selectAll("line")
+    .data(graph.links)
+    .enter().append("line")
+      .attr("stroke-width", function(d) { return Math.sqrt(d.value/10); })
+          .on("mouseover", function(d) { mouseover_link(d); })
+          .on("mouseout", function(d) { mouseout_link(d) })
+          .on("click", function(d){ window.open('/networkx/' + json_file.replace('index.json', d.url), '_blank') })
+
+  var node = svg.append("g")
+      .attr("class", "nodes")
+    .selectAll("circle")
+    .data(graph.nodes)
+    .enter().append("circle")
+      .attr("r", function(d) { return Math.sqrt(d.total/10); })
+      .attr("fill", function(d) { return color(communities[d.id]); })
+      .call(d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended))
+          .on("mouseover", function(d) { mouseover_node(d); })
+          .on("mouseout", function(d) { mouseout_node(d) });
+
+  var label = svg.append("g")
+      .attr("class", "nodes")
+    .selectAll(".node_label")
+    .data(graph.nodes)
+    .enter().append("text")
+      .attr("class", "node_label")
+      .attr("dx", ".4em")
+      .attr("dy", ".4em")
+      .attr("font-family", "Verdana")
+      .attr("font-size", 10)
+      .style("fill", "#000000")
+      .text(function(d) { return d.id.split("/")[1]; });
+
+  node.append("title")
+      .text(function(d) { return d.id.split("/")[1]; });
+
+  simulation
+      .nodes(graph.nodes)
+      .on("tick", ticked);
+
+  simulation.force("link")
+      .links(graph.links);
+
+
+//add drag capabilities  
+var drag_handler = d3.drag()
+  .on("start", drag_start)
+  .on("drag", drag_drag)
+  .on("end", drag_end); 
+  
+drag_handler(node);
+
+
+//add zoom capabilities 
+var zoom_handler = d3.zoom()
+    .on("zoom", zoom_actions);
+
+zoom_handler(svg);     
+
+  function ticked() {
+    link
+        .attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+    node
+        .attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
+
+    label.attr("x", function(d) { return d.x; })
+        .attr("y", function(d) { return d.y; });
+  }
+
+
+var mouseover_node = function(z){ 
+
+    var neighbors = {};
+    neighbors[z.index] = true;
+
+    link.filter(function(d){
+        if (d.source == z) {
+          neighbors[d.target.index] = true
+          return true
+        } else if (d.target == z) {
+          neighbors[d.source.index] = true
+          return true
+        } else {
+          return false
+        }
+      })
+        .style("stroke-opacity", 1);
+
+    node.filter(function(d){ return neighbors[d.index] })
+        .style("stroke-width", 3);
+
+    label.filter(function(d){ return neighbors[d.index] })
+        .style("fill-opacity", 1);
+
+    label.filter(function(d){ return !neighbors[d.index] })
+        .style("fill-opacity", 0.1);
+
+    label.filter(function(d){ return neighbors[d.index] })
+        .attr("font-size", 10)
+
+  };
+
+  var mouseout_node = function(z){ 
+    link
+      .style("stroke-opacity", 0.2);
+
+    node
+      .style("stroke-width", 1)
+
+    label
+      .attr("font-size", 10)
+     .style("fill-opacity", 0.1)
+
+  };
+
+
+var mouseover_link = function(z){ 
+
+    console.log (z);
+
+    var neighbors = {};
+    neighbors[z.source.index] = true;
+    neighbors[z.target.index] = true;
+
+    link.filter(function(d){
+        if (d == z) {
+          neighbors[d.source.index] = true
+          return true
+        } else {
+          return false
+        }
+      })
+        .style("stroke-opacity", 1);
+
+    node.filter(function(d){ return neighbors[d.index] })
+        .style("stroke-width", 3);
+
+    label.filter(function(d){ return neighbors[d.index] })
+        .style("fill-opacity", 1);
+
+    label.filter(function(d){ return d == z.source })
+        .text(function(d){return d.id.split("/")[1] + ' ' + z.sp});
+
+    label.filter(function(d){ return d == z.target })
+        .text(function(d){return d.id.split("/")[1] + ' ' + z.tp});
+
+    label.filter(function(d){ return !neighbors[d.index] })
+        .style("fill-opacity", 0.1);
+
+    label.filter(function(d){ return neighbors[d.index] })
+        .attr("font-size", 10)
+
+
+  };
+
+  var mouseout_link = function(z){ 
+    link
+      .style("stroke-opacity", 0.2);
+
+    node
+      .style("stroke-width", 1)
+
+    label
+      .attr("font-size", 10)
+      .style("fill-opacity", 0.1)
+      .text(function(d){return d.id.split("/")[1]});
+
+  };
+
+  var legend = svg.append("g")
+    .attr("class", "legend")
+    .attr("transform", function(d) { return "translate(50,50)"; });
+
+  legend.append("text")
+      .attr("class", "legend")
+      .attr("x", 0)
+      .attr("y", -30)
+      .style("text-anchor", "left")
+      .text("link = # co-occurrences");
+
+  legend.append("text")
+      .attr("class", "legend")
+      .attr("x", 0)
+      .attr("y", -10)
+      .style("text-anchor", "left")
+      .text("click edges for moss report");
+
+  legend.append("text")
+      .attr("class", "legend")
+      .attr("x", 0)
+      .attr("y", 10)
+      .style("text-anchor", "left")
+      .text("color are communities (Louvain)");
+
+  legend.append("circle")
+      .attr("class", "node_count")
+      .attr("cx", -30)
+      .attr("cy", 50)
+      .attr("r", function(d) { return Math.sqrt(10) / 2; });
+
+  legend.append("text")
+      .attr("class", "legend")
+      .attr("x", 0)
+      .attr("y", 54)
+      .style("text-anchor", "left")
+      .text("100 matching lines");
+
+  legend.append("circle")
+      .attr("class", "node_count")
+      .attr("cx", -30)
+      .attr("cy", 90)
+      .attr("r", function(d) { return Math.sqrt(200) / 2; });
+
+  legend.append("text")
+      .attr("class", "legend")
+      .attr("x", 0)
+      .attr("y", 94)
+      .style("text-anchor", "left")
+      .text("1000 matching lines");
+
+  //Drag functions 
+//d is the node 
+function drag_start(d) {
+ if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+}
+
+//make sure you can't drag the circle outside the box
+function drag_drag(d) {
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
+}
+
+function drag_end(d) {
+  if (!d3.event.active) simulation.alphaTarget(0);
+  d.fx = null;
+  d.fy = null;
+}
+
+//Zoom functions 
+function zoom_actions(){
+    svg.attr("transform", d3.event.transform)
+}
+
+});
+
+
+function dragstarted(d) {
+  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x;
+  d.fy = d.y;
+}
+
+function dragged(d) {
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
+}
+
+function dragended(d) {
+  if (!d3.event.active) simulation.alphaTarget(0);
+  d.fx = null;
+  d.fy = null;
+}
+
+</script>
